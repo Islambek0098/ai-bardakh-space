@@ -15,14 +15,17 @@ const courses = [
   "NLP va Computer Vision",
 ];
 
+const WEBHOOK_URL = "https://hook.eu1.make.com/baylrj20mhstn41webvja8x6b0khlybk";
+
 const HeroSection = () => {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [course, setCourse] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !phone || !course) {
       toast({
@@ -32,14 +35,42 @@ const HeroSection = () => {
       });
       return;
     }
-    toast({
-      title: "So'rovingiz qabul qilindi!",
-      description: "Tez orada siz bilan bog'lanamiz",
-    });
-    setOpen(false);
-    setName("");
-    setPhone("");
-    setCourse("");
+
+    setIsLoading(true);
+    try {
+      await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        mode: "no-cors",
+        body: JSON.stringify({
+          value: {
+            name: name,
+            phone: phone,
+            course: course,
+          },
+        }),
+      });
+
+      toast({
+        title: "So'rovingiz qabul qilindi!",
+        description: "Tez orada siz bilan bog'lanamiz",
+      });
+      setOpen(false);
+      setName("");
+      setPhone("");
+      setCourse("");
+    } catch (error) {
+      console.error("Webhook error:", error);
+      toast({
+        title: "Xatolik",
+        description: "Ma'lumotlarni yuborishda xatolik yuz berdi",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -121,8 +152,8 @@ const HeroSection = () => {
                         </SelectContent>
                       </Select>
                     </div>
-                    <Button type="submit" variant="hero" className="w-full">
-                      Yuborish
+                    <Button type="submit" variant="hero" className="w-full" disabled={isLoading}>
+                      {isLoading ? "Yuborilmoqda..." : "Yuborish"}
                     </Button>
                   </form>
                 </DialogContent>
