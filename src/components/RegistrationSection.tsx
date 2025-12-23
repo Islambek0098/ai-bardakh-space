@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, CheckCircle } from "lucide-react";
+import { Send, CheckCircle, Loader2 } from "lucide-react";
 import { toast } from "@/components/ui/sonner";
+
+const WEBHOOK_URL = "https://hook.eu1.make.com/baylrj20mhstn41webvja8x6b0khlybk";
 
 const courses = [
   "Python va AI asoslari",
@@ -17,8 +19,9 @@ const RegistrationSection = () => {
     phone: "",
     course: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!formData.name || !formData.phone || !formData.course) {
@@ -26,11 +29,33 @@ const RegistrationSection = () => {
       return;
     }
 
-    toast.success("So'rovingiz qabul qilindi!", {
-      description: "Tez orada siz bilan bog'lanamiz.",
-    });
+    setIsLoading(true);
+    try {
+      await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        mode: "no-cors",
+        body: JSON.stringify({
+          value: {
+            name: formData.name,
+            phone: formData.phone,
+            course: formData.course,
+          },
+        }),
+      });
 
-    setFormData({ name: "", phone: "", course: "" });
+      toast.success("So'rovingiz qabul qilindi!", {
+        description: "Tez orada siz bilan bog'lanamiz.",
+      });
+      setFormData({ name: "", phone: "", course: "" });
+    } catch (error) {
+      console.error("Webhook error:", error);
+      toast.error("Ma'lumotlarni yuborishda xatolik yuz berdi");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -132,9 +157,9 @@ const RegistrationSection = () => {
                   </select>
                 </div>
 
-                <Button type="submit" variant="hero" size="lg" className="w-full">
-                  <Send className="w-5 h-5" />
-                  Yuborish
+                <Button type="submit" variant="hero" size="lg" className="w-full" disabled={isLoading}>
+                  {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
+                  {isLoading ? "Yuborilmoqda..." : "Yuborish"}
                 </Button>
               </div>
 
