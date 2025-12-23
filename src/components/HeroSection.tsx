@@ -1,8 +1,47 @@
-import { Phone, ArrowRight, Sparkles, Brain, Users } from "lucide-react";
+import { ArrowRight, Sparkles, Brain, Users, FileText, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 import heroImage from "@/assets/hero-ai.jpg";
 
+const courses = [
+  "Python va AI asoslari",
+  "Machine Learning & Deep Learning",
+  "Data Science",
+  "NLP va Computer Vision",
+];
+
 const HeroSection = () => {
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [course, setCourse] = useState("");
+  const { toast } = useToast();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name || !phone || !course) {
+      toast({
+        title: "Xatolik",
+        description: "Iltimos, barcha maydonlarni to'ldiring",
+        variant: "destructive",
+      });
+      return;
+    }
+    toast({
+      title: "So'rovingiz qabul qilindi!",
+      description: "Tez orada siz bilan bog'lanamiz",
+    });
+    setOpen(false);
+    setName("");
+    setPhone("");
+    setCourse("");
+  };
+
   return (
     <section
       id="home"
@@ -36,12 +75,58 @@ const HeroSection = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <a href="tel:+998943513232">
-                <Button variant="hero" size="lg" className="gap-2">
-                  <Phone className="w-5 h-5" />
-                  Hoziroq qo'ng'iroq qiling
-                </Button>
-              </a>
+              <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="hero" size="lg" className="gap-2">
+                    <FileText className="w-5 h-5" />
+                    Ariza qoldirish
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle className="text-2xl font-bold text-heading">Ariza qoldirish</DialogTitle>
+                  </DialogHeader>
+                  <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="modal-name">Ismingiz</Label>
+                      <Input
+                        id="modal-name"
+                        placeholder="Ismingizni kiriting"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="modal-phone">Telefon raqamingiz</Label>
+                      <Input
+                        id="modal-phone"
+                        type="tel"
+                        placeholder="+998 90 123 45 67"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="modal-course">Kursni tanlang</Label>
+                      <Select value={course} onValueChange={setCourse}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Kursni tanlang" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {courses.map((c) => (
+                            <SelectItem key={c} value={c}>
+                              {c}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <Button type="submit" variant="hero" className="w-full">
+                      Yuborish
+                    </Button>
+                  </form>
+                </DialogContent>
+              </Dialog>
               <a href="#courses">
                 <Button variant="outline" size="lg" className="gap-2">
                   Kurslarni ko'rish
