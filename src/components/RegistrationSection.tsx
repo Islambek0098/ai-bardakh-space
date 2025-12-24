@@ -38,11 +38,9 @@ const RegistrationSection = () => {
         },
         mode: "no-cors",
         body: JSON.stringify({
-          value: {
-            name: formData.name,
-            phone: formData.phone,
-            course: formData.course,
-          },
+          name: formData.name,
+          phone: formData.phone,
+          course: formData.course,
         }),
       });
 
