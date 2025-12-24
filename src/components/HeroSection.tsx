@@ -45,11 +45,9 @@ const HeroSection = () => {
         },
         mode: "no-cors",
         body: JSON.stringify({
-          value: {
-            name: name,
-            phone: phone,
-            course: course,
-          },
+          name: name,
+          phone: phone,
+          course: course,
         }),
       });
 
