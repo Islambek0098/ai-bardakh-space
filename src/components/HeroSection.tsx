@@ -38,17 +38,15 @@ const HeroSection = () => {
 
     setIsLoading(true);
     try {
+      const payload = `name: ${name}\nphone: ${phone}\ncourse: ${course}`;
+
       await fetch(WEBHOOK_URL, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "text/plain;charset=UTF-8",
         },
         mode: "no-cors",
-        body: JSON.stringify({
-          name: name,
-          phone: phone,
-          course: course,
-        }),
+        body: payload,
       });
 
       toast({
