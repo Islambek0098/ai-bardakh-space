@@ -31,15 +31,19 @@ const RegistrationSection = () => {
 
     setIsLoading(true);
     try {
-      const payload = `name: ${formData.name}\nphone: ${formData.phone}\ncourse: ${formData.course}`;
+      const params = new URLSearchParams({
+        name: formData.name,
+        phone: formData.phone,
+        course: formData.course,
+      });
 
       await fetch(WEBHOOK_URL, {
         method: "POST",
         headers: {
-          "Content-Type": "text/plain;charset=UTF-8",
+          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
         },
         mode: "no-cors",
-        body: payload,
+        body: params.toString(),
       });
 
       toast.success("So'rovingiz qabul qilindi!", {

@@ -38,15 +38,19 @@ const HeroSection = () => {
 
     setIsLoading(true);
     try {
-      const payload = `name: ${name}\nphone: ${phone}\ncourse: ${course}`;
+      const params = new URLSearchParams({
+        name,
+        phone,
+        course,
+      });
 
       await fetch(WEBHOOK_URL, {
         method: "POST",
         headers: {
-          "Content-Type": "text/plain;charset=UTF-8",
+          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
         },
         mode: "no-cors",
-        body: payload,
+        body: params.toString(),
       });
 
       toast({
