@@ -1,5 +1,13 @@
-import { ArrowRight, Clock, BookOpen } from "lucide-react";
+import { useState } from "react";
+import { Clock, BookOpen, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 const courses = [
   {
@@ -9,6 +17,9 @@ const courses = [
     duration: "3 oy",
     lessons: "24 dars",
     color: "from-orange-400 to-amber-500",
+    fullDescription:
+      "Bu kursda siz Python dasturlash tilini noldan o'rganasiz. Kurs davomida o'zgaruvchilar, shartli operatorlar, sikllar, funksiyalar, ob'ektga yo'naltirilgan dasturlash va sun'iy intellekt asoslari bilan tanishasiz. Amaliy loyihalar orqali bilimlaringizni mustahkamlaysiz.",
+    topics: ["Python asoslari", "Ma'lumotlar tuzilmalari", "OOP", "AI kirish", "Amaliy loyihalar"],
   },
   {
     title: "Machine Learning & Deep Learning",
@@ -17,6 +28,9 @@ const courses = [
     duration: "4 oy",
     lessons: "32 dars",
     color: "from-primary to-orange-glow",
+    fullDescription:
+      "Mashinali o'qitish va chuqur o'qitish algoritmlarini chuqur o'rganing. Scikit-learn, TensorFlow va PyTorch kutubxonalari bilan ishlashni o'rganasiz. Haqiqiy loyihalar ustida ishlash orqali tajriba orttirasiz.",
+    topics: ["Regression", "Classification", "Neural Networks", "CNN", "RNN", "Transfer Learning"],
   },
   {
     title: "Data Science",
@@ -25,6 +39,9 @@ const courses = [
     duration: "3.5 oy",
     lessons: "28 dars",
     color: "from-amber-500 to-yellow-500",
+    fullDescription:
+      "Ma'lumotlar fani sohasida professional bo'ling. Pandas, NumPy, Matplotlib va Seaborn kutubxonalari bilan ishlashni o'rganasiz. Ma'lumotlarni tahlil qilish, vizualizatsiya va biznes qarorlarini qabul qilishda yordam beradigan bilimlarni egallaysiz.",
+    topics: ["Pandas", "NumPy", "Data Visualization", "Statistical Analysis", "Business Intelligence"],
   },
   {
     title: "NLP va Computer Vision",
@@ -33,10 +50,15 @@ const courses = [
     duration: "4 oy",
     lessons: "30 dars",
     color: "from-orange-500 to-red-500",
+    fullDescription:
+      "Tabiiy til qayta ishlash va kompyuter ko'rish texnologiyalarini chuqur o'rganing. Matn tahlili, sentiment analizi, ob'ektlarni aniqlash va tasvirlarni klassifikatsiya qilish kabi mavzularni o'z ichiga oladi.",
+    topics: ["Text Processing", "Sentiment Analysis", "Object Detection", "Image Classification", "Transformers"],
   },
 ];
 
 const CoursesSection = () => {
+  const [selectedCourse, setSelectedCourse] = useState<typeof courses[0] | null>(null);
+
   return (
     <section id="courses" className="py-20 bg-background">
       <div className="container mx-auto">
@@ -76,20 +98,71 @@ const CoursesSection = () => {
                     <span className="text-sm">{course.lessons}</span>
                   </div>
                 </div>
-                <a href="#register">
-                  <Button
-                    variant="outline"
-                    className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300"
-                  >
-                    Kursga yozilish
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </a>
+                <Button
+                  variant="outline"
+                  className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300"
+                  onClick={() => setSelectedCourse(course)}
+                >
+                  Batafsil
+                  <Info className="w-4 h-4 ml-2" />
+                </Button>
               </div>
             </div>
           ))}
         </div>
       </div>
+
+      <Dialog open={!!selectedCourse} onOpenChange={() => setSelectedCourse(null)}>
+        <DialogContent className="max-w-lg">
+          {selectedCourse && (
+            <>
+              <DialogHeader>
+                <div className={`h-2 bg-gradient-to-r ${selectedCourse.color} -mx-6 -mt-6 mb-4 rounded-t-lg`} />
+                <DialogTitle className="text-2xl text-heading">
+                  {selectedCourse.title}
+                </DialogTitle>
+                <DialogDescription className="text-body pt-2">
+                  {selectedCourse.fullDescription}
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="space-y-4 mt-4">
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-2 text-body">
+                    <Clock className="w-5 h-5 text-primary" />
+                    <span>{selectedCourse.duration}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-body">
+                    <BookOpen className="w-5 h-5 text-primary" />
+                    <span>{selectedCourse.lessons}</span>
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-semibold text-heading mb-2">Kurs mavzulari:</h4>
+                  <ul className="space-y-1">
+                    {selectedCourse.topics.map((topic, idx) => (
+                      <li key={idx} className="text-body flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 bg-primary rounded-full" />
+                        {topic}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="flex justify-end pt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => setSelectedCourse(null)}
+                  >
+                    Yopish
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </section>
   );
 };
